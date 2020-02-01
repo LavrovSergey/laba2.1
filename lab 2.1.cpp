@@ -554,8 +554,8 @@ void relaxation(struct user userr) {
 int id() {
 	user userr;
 	int id=0;
-	ifstream users("users1.db", ios::binary);
-	if (!users.is_open())
+	ifstream users("users.db", ios::binary);
+	if (users.tellg())
 	{
 		id = 1;
 	}
@@ -582,7 +582,7 @@ int reg() {
 	cout << "role(0-user; 1-admin): ";
 	cin >> userr.role;
 	userr.times = 0;
-	ofstream users("users1.db", ios::app || ios::binary);
+	ofstream users("users.db", ios::app || ios::binary);
 	users.write((char*)& userr, sizeof(user));
 	users.close();
 	return 0;
