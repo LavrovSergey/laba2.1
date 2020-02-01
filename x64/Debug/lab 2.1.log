@@ -1,0 +1,3 @@
+﻿  lab 2.1.cpp
+A:\GitHub\laba2.1\lab 2.1.cpp(634): warning C4715:  log_in: значение возвращается не при всех путях выполнения
+  lab 2.1.vcxproj -> A:\GitHub\laba2.1\x64\Debug\lab 2.1.exe
