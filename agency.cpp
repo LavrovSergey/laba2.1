@@ -28,7 +28,13 @@ struct vacation {
 	int price = {};
 	bool isdelete = {};
 };
-
+struct discount {
+	int id = {};
+	int from = {};
+	int to = {};
+	int discount;
+	bool isdelete;
+};
 int menu_start() {
 	int key = 0;
 	int code;
@@ -107,12 +113,16 @@ int start_admin() {
 	int code;
 	do {
 		system("cls");
-		key = (key + 3) % 3;
+		key = (key + 5) % 5;
 		if (key == 0) cout << "-> View tours and edit" << endl;
 		else  cout << "   View tours and edit" << endl;
 		if (key == 1) cout << "-> Add new tours" << endl;
 		else  cout << "   Add new tours" << endl;
-		if (key == 2) cout << "-> Exit" << endl;
+		if (key == 2) cout << "-> Add new discount" << endl;
+		else  cout << "   Add new discount" << endl;
+		if (key == 3) cout << "-> View discounts and edit" << endl;
+		else  cout << "   View discounts and edit" << endl;
+		if (key == 4) cout << "-> Exit" << endl;
 		else  cout << "   Exit" << endl;
 		code = _getch();
 		if (code == 224)
@@ -137,6 +147,31 @@ int changes() {
 		else  cout << "   Description" << endl;
 		if (key == 2) cout << "-> Price" << endl;
 		else  cout << "   Price" << endl;
+		if (key == 3) cout << "-> Delete or return" << endl;
+		else  cout << "   Delete or return" << endl;
+		code = _getch();
+		if (code == 224)
+		{
+			code = _getch();
+			if (code == 80) key++;
+			if (code == 72) key--;
+		}
+	} while (code != 13);
+	system("cls");
+	return key;
+}
+int edit() {
+	int key = 0;
+	int code;
+	do {
+		system("cls");
+		key = (key + 4) % 4;
+		if (key == 0) cout << "-> From" << endl;
+		else  cout << "   From" << endl;
+		if (key == 1) cout << "-> To" << endl;
+		else  cout << "   To" << endl;
+		if (key == 2) cout << "-> Discount" << endl;
+		else  cout << "   Discount" << endl;
 		if (key == 3) cout << "-> Delete or return" << endl;
 		else  cout << "   Delete or return" << endl;
 		code = _getch();
@@ -256,6 +291,109 @@ int md5(char* p, int n) {
 	return a0 + b0 + c0 + d0;
 }
 
+void addd(){
+	system("cls");
+	int id = 0;
+	discount dis;
+	ifstream discounts1("discounts.dat");
+	if (discounts1.tellg())
+	{
+		id = 1;
+	}
+	else
+	{
+		while (!discounts1.eof())
+		{
+			discounts1.read((char*)& dis, sizeof(discount));
+			id++;
+		}
+	}
+	dis.id = id;
+	discounts1.close();
+	ofstream discounts("discounts.dat", ios::app, ios::binary);
+	cout << "FROM: ";
+	cin>>dis.from;
+	cout << "TO: ";
+	cin>>dis.to;
+	cout << "Discounts: ";
+	cin >> dis.discount;
+	cout << "SHOW(0) or HIDE(1)";
+	cin >> dis.isdelete;
+	discounts.write((char*)& dis, sizeof(discount));
+	discounts.close();
+
+}
+void addv(){
+	system("cls");
+	int count = 0;
+	int key = 0, num = 0;
+	discount dis;
+	ifstream discounts1("discounts.dat", ios::binary);
+	while (!discounts1.eof())
+	{
+		discounts1.read((char*)& dis, sizeof(discount));
+		if (discounts1.eof()) { break; }
+		key++;
+		count++;
+		cout << key << ". " << dis.from << endl;
+		cout << dis.to << endl;
+		cout << dis.discount << endl;
+		cout << dis.isdelete << endl;
+	}
+	cout << "If you want back, press SPACE. Continue-ENTER" << endl;
+	do {
+		key = _getch();
+		if (key == 13) { break; }
+		else if (key == 32) { return vne(); }
+	} while (key != 32 || key != 13);
+	cout << "Enter the number of your choise which you want to edit" << endl;
+	cin >> key;
+	discounts1.close();
+	ifstream discounts2("discounts.dat", ios::binary);
+	while (!discounts2.eof())
+	{
+		discounts2.read((char*)& dis, sizeof(discount));
+		num++;
+		if (num == key) { break; }
+
+	}
+	discounts2.close();
+	system("cls");
+	cout << "You have choosed:" << endl;
+	cout << dis.from << endl;
+	cout << dis.to << endl;
+	cout << dis.discount << endl;
+	cout << dis.isdelete << endl;
+	discount* mas = new discount[count];
+	ifstream discounts3("discounts.dat", ios::binary);
+	for (int j = 0; j < count; j++)
+	{
+		discounts3.read((char*)(&mas[j]), sizeof(discount));
+	}
+	discounts3.close();
+	ofstream discounts4("discounts.dat", ios::binary);
+	for (int j = 0; j < count; j++)
+	{
+		if (j == num - 1)
+		{
+			cout << "What do you want to change?" << endl;
+			int answer = 0;
+			answer = edit();
+			switch (answer)
+			{
+			case 0:cout << "New from: "; cin>> mas[j].from; break;
+			case 1:cout << "New to: "; cin>> mas[j].to; break;
+			case 2:cout << "New discount: "; cin >> mas[j].discount; break;
+			case 3: cout << "Deleted returns, not deleted delets."; if (mas[j].isdelete == 0) { mas[j].isdelete = 1; }
+					else(mas[j].isdelete = 0); break;
+			}
+			discounts4.write((char*)(&mas[j]), sizeof(discount));
+		}
+		else(discounts4.write((char*)(&mas[j]), sizeof(discount)));
+	}
+	discounts4.close();
+	delete[]mas;
+}
 void add() {
 	system("cls");
 	cout << "What type of tour do you want to add? " << endl;
@@ -602,7 +740,9 @@ void admin() {
 	{
 	case 0:vne(); break;
 	case 1:add(); break;
-	case 2: system("cls"); cout << "Goodbye!\n__________________"; isRunning = false; main(isRunning);
+	case 2:addd(); break;
+	case 3:addv(); break;
+	case 4: system("cls"); cout << "Goodbye!\n__________________"; isRunning = false; main(isRunning);
 	}
 }
 void welcome(struct user userr) {
@@ -622,17 +762,23 @@ void welcome(struct user userr) {
 void pay(struct user userr, struct vacation vacationn) {
 	system("cls");
 	sold soldd;
+	discount dis;
 	char cvv[3];
+	int discountt=0;
 	int y, m;
 	soldd.id = userr.id;
 	cout << "How many people?" << endl;
 	cin >> soldd.a;
-	if (userr.times > 5)                                                                             //МЕНЯЮЩАЯСЯ СКИДКА
+	ifstream discounts("discounts.dat");
+	while (!discounts.eof())
 	{
-		cout << "You bought more than 5 tours, so we give you a 10% discount";
-		vacationn.price = soldd.a * (vacationn.price - (vacationn.price * 10 / 100));
+		discounts.read((char*)&dis, sizeof(discount));
+		if (dis.isdelete == 0) 
+		{
+			if (userr.times > dis.from && userr.times < dis.to) { discountt = dis.discount; cout << "You bought more than " << userr.times << " tours, so we give you a " << discountt << "% discount"<<endl; break; }
+		}
 	}
-	else(vacationn.price = soldd.a * vacationn.price);
+	vacationn.price = soldd.a * (vacationn.price - (vacationn.price * discountt / 100));
 	cout << "You have to pay:" << vacationn.price << endl;
 	cout << "Your login: "<<endl;
 	_memccpy(soldd.login, userr.login, '\0', 20);
