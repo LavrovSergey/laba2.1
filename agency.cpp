@@ -83,11 +83,14 @@ int options() {
 	system("cls");
 	return key;
 }
-int choise() {
+int choise(struct user userr, int b) {
 	int key = 0;
 	int code;
 	do {
 		system("cls");
+		if (b == 1) { cout << "Hi, " << userr.login << "!" << "What type of weekend would you choose?" << endl; }
+		if (b == 2) { cout << "Choose which one do you want to view" << endl; }
+		if (b == 3) { cout << "What type of tour do you want to add? " << endl;}
 		key = (key + 4) % 4;
 		if (key == 0) cout << "-> Shopping" << endl;
 		else  cout << "   Shopping" << endl;
@@ -396,9 +399,10 @@ void addv(){
 }
 void add() {
 	system("cls");
-	cout << "What type of tour do you want to add? " << endl;
+	user userr;
+	int b = 3;
 	int answer = 0;
-	answer = choise();
+	answer = choise(userr, b);
 	switch (answer)
 	{
 	case 0:
@@ -718,10 +722,11 @@ void rvne() {
 	delete[]mas;
 }
 void vne() {
-	cout << "Choose which one do you want to view" << endl;
+	int b = 2;
+	user userr;
 	bool isRunning;
 	int answer = 0;
-	answer = choise();
+	answer = choise(userr, b);
 	switch (answer)
 	{
 	case 0:svne(); break;
@@ -747,10 +752,10 @@ void admin() {
 }
 void welcome(struct user userr) {
 	system("cls");
-	cout << "Hi, " << userr.login << "!" << "What type of weekend would you choose?" << endl;
+	int b = 1;
 	bool isRunning;
 	int answer = 0;
-	answer = choise();
+	answer = choise(userr, b);
 	switch (answer)
 	{
 	case 0:relaxation(userr); break;
@@ -766,6 +771,10 @@ void pay(struct user userr, struct vacation vacationn) {
 	char cvv[3];
 	int discountt=0;
 	int y, m;
+	cout << "You have choosed:" << endl;
+	cout << vacationn.name << endl;
+	cout << vacationn.description << endl;
+	cout << vacationn.price << endl;
 	soldd.id = userr.id;
 	cout << "How many people?" << endl;
 	cin >> soldd.a;
@@ -780,9 +789,9 @@ void pay(struct user userr, struct vacation vacationn) {
 	}
 	vacationn.price = soldd.a * (vacationn.price - (vacationn.price * discountt / 100));
 	cout << "You have to pay:" << vacationn.price << endl;
-	cout << "Your login: "<<endl;
+	cout << "Your login: ";
 	_memccpy(soldd.login, userr.login, '\0', 20);
-	cout << soldd.login;
+	cout << soldd.login<<endl;
 	cout << "Enter your email: ";
 	cin >> soldd.email;
 	cout << "Enter number of you card: ";
@@ -792,7 +801,11 @@ void pay(struct user userr, struct vacation vacationn) {
 	cout << "Enter cvv code";
 	cin.ignore();
 	cin.getline(cvv, 3);
-	cout << "You will get your tickets and futher information on your email";
+	cout << "You will get your tickets and futher information on your email" << endl;
+	int code;
+	do{cout << "Press ENTER to exit"<<endl;
+	code = _getch();
+	} while (code != 13);
 	ofstream list("sold.txt", ios::app);
 	list.write((char*)& soldd, sizeof(sold));
 	list << "\n";
@@ -824,7 +837,7 @@ void pay(struct user userr, struct vacation vacationn) {
 	}
 	users2.close();
 	list.close();
-}                                                  //СДЕЛАТЬ ЗАЩИТУ ОТ ДАУНОВ
+}                                                  
 void shopping(struct user userr) {
 	system("cls");
 	int key = 0, num = 0;
@@ -853,11 +866,6 @@ void shopping(struct user userr) {
 			if (num == key) { break; }
 		}
 	}
-	system("cls");
-	cout << "You have choosed:" << endl;
-	cout << vacationn.name << endl;
-	cout << vacationn.description << endl;
-	cout << vacationn.price << endl;
 	bool isRunning;
 	int answer = 0;
 	answer = options();
@@ -899,11 +907,6 @@ void excursion(struct user userr) {
 			if (num == key) { break; }
 		}
 	}
-	system("cls");
-	cout << "You have choosed:" << endl;
-	cout << vacationn.name << endl;
-	cout << vacationn.description << endl;
-	cout << vacationn.price << endl;
 	bool isRunning;
 	int answer = 0;
 	answer = options();
@@ -947,11 +950,6 @@ void relaxation(struct user userr) {
 			if (num == key) { break; }
 		}
 	}
-	system("cls");
-	cout << "You have choosed:" << endl;
-	cout << vacationn.name << endl;
-	cout << vacationn.description << endl;
-	cout << vacationn.price << endl;
 	bool isRunning;
 	int answer = 0;
 	answer = options();
@@ -982,7 +980,7 @@ int id() {
 	}
 	users.close();
 	return id;
-}                                                                                                                 //СДЕЛАТЬ ЗАЩИТУ ОТ ДАУНОВ
+}                                                                                                                 
 void reg() {
 	system("cls");
 	cout << "Registration(if you see this again, we already have one like this. try again)" << endl;
@@ -1004,6 +1002,7 @@ void reg() {
 	strcpy_s(userr.login, login);
 	users3.close();
 	cout << "password: ";
+	cin.clear();
 	cin >> password;
 	userr.md = md5(password, strlen(password));
 	cout << "role(0-user; 1-admin): ";
